@@ -15,6 +15,6 @@ Street Action::getStreet() {
     return street;
 }
 
-std::shared_ptr<Player> Action::getPlayer() {
-    return player.lock();
+weak_ptr<Player> Action::getPlayer() {
+    return player;
 }
