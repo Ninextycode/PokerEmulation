@@ -1,20 +1,28 @@
 #include "PokerSimuator.h"
 
-using namespace pok;
+using namespace pkr;
 using namespace std;
+
+Action::Action(int money, Street street, 
+        string player) {
+    this->money = money;
+    this->player = player;
+    this->street = street;
+}
 
 int Action::getMoney() {
     return money;
-}
-
-Move Action::getMove() {
-    return move;
 }
 
 Street Action::getStreet() {
     return street;
 }
 
-weak_ptr<Player> Action::getPlayer() {
+string Action::getPlayer() {
     return player;
+}
+
+ostream& pkr::operator <<(std::ostream& out, const Action& action) {
+    out << action.player << " put " << action.money << " on " << action.street;
+    return out;
 }

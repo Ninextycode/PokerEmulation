@@ -1,45 +1,72 @@
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <exception>
+#include <string>
 
-namespace pok {
+#define s_ptr std::shared pointer
+#define w_ptr std::weak_ptr<_Tp
+namespace pkr {
     class Player;
     
     enum class Street {
         preflop, flop, turn, river
     };
-
-    enum class Move {
-        fold, check, call, bet, raise
-    };
-
+    std::ostream& operator<<(std::ostream& out, const Street& street);
+    
     class Action {
-    public:
-        class ActionBuilder {
+    public:      
+        class ActionBuilder : public std::enable_shared_from_this<ActionBuilder>{
         public:
-            ActionBuilder setPlayer();
-            ActionBuilder setMoney(int money);
-            ActionBuilder setMove(Move move);
-            ActionBuilder setStreet(Street street);
+            //TODO return reference instead of pointers
+            static std::shared_ptr<ActionBuilder> build_ptr();
+            
+            std::shared_ptr<ActionBuilder> setPlayer(std::string player);
+            std::shared_ptr<ActionBuilder> setMoney(int money);
+            std::shared_ptr<ActionBuilder> setStreet(Street street);
             Action build();
+            
         private:
-            std::weak_ptr<Player> player;
-            Move move;
+            ActionBuilder();
+            std::string player;
             Street street;
             int money = 0;
+            
+            bool playerSet = false;
+            bool streetSet = false;
+            bool moneySet = false;    
+        };
+        
+        class ActionBuilder2 {
+        public:
+            //TODO return reference instead of pointers            
+            ActionBuilder2& setPlayer(std::string player);
+            ActionBuilder2& setMoney(int money);
+            ActionBuilder2& setStreet(Street street);
+            Action build();
+        private:
+            std::string player;
+            Street street;
+            int money = 0;
+            
+            bool playerSet = false;
+            bool streetSet = false;
+            bool moneySet = false;    
         };
         
         int getMoney();
-        Move getMove();
-        std::weak_ptr<Player> getPlayer();
+        std::string getPlayer();
         Street getStreet();
     private:
-        Action(int money, Move move, Street street, Player player);
+        Action(int money, Street street, std::string player);
+        
         int money;
-        Move move;
         Street street;
-        std::weak_ptr<Player> player;
+        std::string player;
+        
+    friend std::ostream& operator<<(std::ostream& out, const Action& action);
     };
-
+    
     class Game {
     public:
         bool isActionValid(Action action);
@@ -55,12 +82,16 @@ namespace pok {
      */
     class Player {
     public:
-        virtual void preformAction(std::shared_ptr<Game> currentGame) = 0;  
+        virtual std::string getName() = 0;
+        virtual void preformAction(std::weak_ptr<Game> currentGame) = 0;  
         virtual ~Player();
     };
     
-    class AllInPlayer {
+    class AllInPlayer : public Player{
+    private:
+        std::string name;
     public:
-        void preformAction(std::shared_ptr<Game> currentGame) override;
+        std::string getName() override;
+        void preformAction(std::weak_ptr<Game> currentGame) override;
     };
 }
