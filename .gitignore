@@ -14,7 +14,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+*mod
 *.smod
 
 # Compiled Static libraries
@@ -27,3 +27,11 @@
 *.exe
 *.out
 *.app
+
+#NetBeans
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/

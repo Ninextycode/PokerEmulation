@@ -1,4 +1,4 @@
-#include "PokerSimuator.h"
+#include "game.h"
 
 using namespace std;
 using namespace pkr;
