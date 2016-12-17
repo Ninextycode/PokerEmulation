@@ -5,8 +5,12 @@ using namespace std;
 using namespace pkr;
 
 int main(int argc, char** argv) {
-    Action a = Action::ActionBuilder().setPlayer("Vova").setMoney(10).setStreet(Street::flop).build();
-    cout << a << endl;
+    Deck d;
+    d.shuffle();
+    while(d.size() > 0) {
+         cout << d.popCard() << endl;
+    }
+   
     return 0;
 }
 

@@ -3,6 +3,7 @@
 
 #include "headers.h"
 #include "game.h"
+#include "data_structures.h"
 
 namespace pkr{
     class Game;
@@ -14,7 +15,7 @@ namespace pkr{
      */
     class Player {
     private:
-        int money;
+        Card card1, card2;
     public:
         virtual void markAsWinner() = 0;
         virtual void preformAction(std::weak_ptr<Game> currentGame) = 0;  

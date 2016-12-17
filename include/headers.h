@@ -19,6 +19,8 @@
 #include <iostream>
 #include <exception>
 #include <string>
+#include <algorithm> 
+#include <ctime>
 
 #endif /* HEADERS_H */
 

@@ -5,12 +5,12 @@
 
 namespace pkr {
         
-    enum class Suit {
+    enum Suit {
         s, p, d, f
     };
     std::ostream& operator<<(std::ostream& out, const Suit& suit);
     
-    enum class Rank{
+    enum Rank{
         _2, _3, _4, _5, _6, _7, _8, _9, T, J, Q, K, A
     };
     std::ostream& operator<<(std::ostream& out, const Rank& rank);
@@ -21,7 +21,23 @@ namespace pkr {
         Suit suit;
         Card(Rank rank, Suit suit);
     private:
-        Card();
+        Card();        
+    friend std::ostream& operator<<(std::ostream& out, const Card& card);
+    };
+    
+    struct Hand {
+        Card c1;
+        Card  c2;
+    };
+    
+    class Deck {
+    public:
+        Deck();
+        void shuffle();
+        Card popCard();
+        int size();
+    private:
+        std::vector<Card> cards;
     };
     
     enum class Street {
@@ -29,7 +45,7 @@ namespace pkr {
     };
     std::ostream& operator<<(std::ostream& out, const Street& street);
     
-        class Action {
+    class Action {
     public:      
         class ActionBuilder {
         public:
@@ -59,6 +75,17 @@ namespace pkr {
         std::string player;
         
     friend std::ostream& operator<<(std::ostream& out, const Action& action);
+    };
+
+    class PlayerData {
+    private:
+        std::shared_ptr<Player> player;
+        Card card1, card2;
+    public:
+        std::vector<Action> actions;
+        int money;
+        std::vector<>
+        
     };
 }
 

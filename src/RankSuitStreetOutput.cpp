@@ -23,43 +23,43 @@ ostream& pkr::operator<<(ostream& out, const Street& street) {
 
 ostream& pkr::operator<<(ostream& out, const Rank& rank) {
     switch(rank) {
-        case Rank::A:
+        case A:
             out << "A";
             break;
-        case Rank::K:
+        case K:
             out << "K";
             break;
-        case Rank::Q:
+        case Q:
             out << "Q";
             break;
-        case Rank::J:
+        case J:
             out << "J";
             break;
-        case Rank::T:
+        case T:
             out << "T";
             break;
-        case Rank::_9:
+        case _9:
             out << "9";
             break;
-        case Rank::_8:
+        case _8:
             out << "8";
             break;
-        case Rank::_7:
+        case _7:
             out << "7";
             break;
-        case Rank::_6:
+        case _6:
             out << "6";
             break;
-        case Rank::_5:
+        case _5:
             out << "5";
             break;
-        case Rank::_4:
+        case _4:
             out << "4";
             break;
-        case Rank::_3:
+        case _3:
             out << "3";
             break;
-        case Rank::_2:
+        case _2:
             out << "2";
             break;
     }
@@ -68,16 +68,16 @@ ostream& pkr::operator<<(ostream& out, const Rank& rank) {
 
 ostream& pkr::operator<<(ostream& out, const Suit& suit) {
     switch(suit) {
-        case Suit::s:
+        case s:
             out << "s";
             break;
-        case Suit::p:
+        case p:
             out << "p";
             break;
-        case Suit::d:
+        case d:
             out << "d";
             break;
-        case Suit::f:
+        case f:
             out << "f";
             break;
     }
