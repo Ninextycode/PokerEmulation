@@ -2,23 +2,26 @@
 #define PLAYER_H
 
 #include "headers.h"
+
+#include "simple_data_structs.h"
 #include "game.h"
-#include "data_structures.h"
+#include "data_structs.h"
 
 namespace pkr{
     class Game;
-    
+    class Action;
     /*
      * Player class contains the logic of decisions, 
      * but not the data used to make this decisions.
      * Data is stored in Game class.
      */
+
     class Player {
     private:
         Card card1, card2;
     public:
         virtual void markAsWinner() = 0;
-        virtual void preformAction(const Game& currentGame) = 0;  
+        virtual Action preformAction(const Game& currentGame) = 0;  
         
         virtual std::string getName() = 0;
         virtual ~Player();
@@ -30,7 +33,7 @@ namespace pkr{
     public:
         void markAsWinner() override;
         std::string getName() override;
-        void preformAction(const Game& currentGame) override;
+        Action preformAction(const Game& currentGame) override;
     };
 }
 

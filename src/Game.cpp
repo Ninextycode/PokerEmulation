@@ -1,9 +1,10 @@
 #include "game.h"
+#include "data_structs.h"
 
 using namespace std;
 using namespace pkr;
 
-
+    
 void Game::setPlayers(vector<shared_ptr<Player> > players) {
     for(auto player_ptr: players) {
         PlayerData pd;
@@ -35,7 +36,7 @@ void Game::prepareDeck() {
 }
 
 void Game::prepareActivePlayers() {
-    activePlayersData = vector<playersData>();
+    activePlayersData = vector<PlayerData>();
     
     for(int i = 0; i < playersData.size(); i++) {
         auto pd = playersData[(i+button) % playersData.size()];
@@ -107,4 +108,8 @@ void Game::workAroundNewAction(Action action, PlayerData& dataOfPlayerWhoActed) 
 
 void Game::distributeBanks() {
    
+}
+
+bool Game::isActionValid(const Action& action) {
+    throw runtime_error("Not implemented");
 }

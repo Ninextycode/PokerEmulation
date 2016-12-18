@@ -3,10 +3,11 @@
 
 #include "headers.h"
 #include "player.h"
-#include "data_structures.h"
+#include "data_structs.h"
 
 namespace pkr {  
     class Player;
+    class PlayerData;
     
     class Game {
     private:

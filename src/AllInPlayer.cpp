@@ -7,8 +7,8 @@ void AllInPlayer::markAsWinner() {
     
 }
 
-void AllInPlayer::preformAction(const Game& currentGame) {
-    
+Action AllInPlayer::preformAction(const Game& currentGame) {
+    throw runtime_error("not implemented");
 }
 
 string AllInPlayer::getName() {

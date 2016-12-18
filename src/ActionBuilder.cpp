@@ -1,4 +1,4 @@
-#include "data_structures.h"
+#include "data_structs.h"
 
 using namespace pkr;
 using namespace std;
@@ -10,7 +10,7 @@ Action::ActionBuilder& Action::ActionBuilder::setMoney(int money) {
     return *this;
 }
 
-Action::ActionBuilder& Action::ActionBuilder::setPlayer(std::string player) {
+Action::ActionBuilder& Action::ActionBuilder::setPlayer(weak_ptr<Player>player) {
     this->player = player;
     this->playerSet = true;
     return *this;
