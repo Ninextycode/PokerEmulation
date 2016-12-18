@@ -3,10 +3,17 @@
 using namespace std;
 using namespace pkr;
 
+
+void Game::setPlayers(vector<shared_ptr<Player> > players) {
+    for(auto player_ptr: players) {
+        PlayerData pd;
+        pd.player = player_ptr;
+        this->playersData.push_back(pd);
+    }
+}
+
 void Game::playRound() {
     prepareForRound();
-    
-
     
     playPreflop();
     playFlop();
@@ -28,15 +35,18 @@ void Game::prepareDeck() {
 }
 
 void Game::prepareActivePlayers() {
-    for(int i = 0; i < players.size(); i++) {
-        if(players[i+button]->getMoney() > 0) {
-            
+    activePlayersData = vector<playersData>();
+    
+    for(int i = 0; i < playersData.size(); i++) {
+        auto pd = playersData[(i+button) % playersData.size()];
+        if(pd.money > 0) {
+            activePlayersData.push_back(pd);
         }
     };
-}
+};
 
 void Game::moveButton() {
-    button =  (button + 1) % players.size();
+    button =  (button + 1) % playersData.size();
 }
 
 void Game::playPreflop() {
@@ -44,7 +54,9 @@ void Game::playPreflop() {
 }
 
 void Game::dealHoleCards() {
-   
+    for(auto pd: activePlayersData) {
+        pd.hand = Hand(deck.popCard(), deck.popCard());
+    }
 }
 
 void Game::playFlop() {
@@ -77,7 +89,20 @@ void Game::dealRiver(){
 }
 
 void Game::playStreet() {
-    
+    int endPlayerIndex = activePlayersData.size();
+    int currentPlayerIndex = 0;
+    while(endPlayerIndex != currentPlayerIndex) {
+        auto pd = activePlayersData[currentPlayerIndex];
+        Action newAction = pd.player->preformAction(*this);
+        workAroundNewAction(newAction, pd);
+        currentPlayerIndex = (currentPlayerIndex + 1) % activePlayersData.size();
+    }
+}
+
+void Game::workAroundNewAction(Action action, PlayerData& dataOfPlayerWhoActed) {
+    if(isActionValid(action)) {
+        
+    }
 }
 
 void Game::distributeBanks() {

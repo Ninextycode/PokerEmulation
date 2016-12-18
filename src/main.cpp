@@ -7,9 +7,8 @@ using namespace pkr;
 int main(int argc, char** argv) {
     Deck d;
     d.shuffle();
-    while(d.size() > 0) {
-         cout << d.popCard() << endl;
-    }
+    Hand h(d.popCard(), d.popCard());
+    cout << h << endl;
    
     return 0;
 }

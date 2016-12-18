@@ -18,7 +18,7 @@ namespace pkr{
         Card card1, card2;
     public:
         virtual void markAsWinner() = 0;
-        virtual void preformAction(std::weak_ptr<Game> currentGame) = 0;  
+        virtual void preformAction(const Game& currentGame) = 0;  
         
         virtual std::string getName() = 0;
         virtual ~Player();
@@ -30,7 +30,7 @@ namespace pkr{
     public:
         void markAsWinner() override;
         std::string getName() override;
-        void preformAction(std::weak_ptr<Game> currentGame) override;
+        void preformAction(const Game& currentGame) override;
     };
 }
 

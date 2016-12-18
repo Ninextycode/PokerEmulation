@@ -13,8 +13,8 @@ namespace pkr {
         int button = 0;
         
         Deck deck;
-        std::vector<std::shared_ptr<Player>> activePlayers;
-        std::vector<std::shared_ptr<Player>> players;
+        std::vector<PlayerData> activePlayersData;
+        std::vector<PlayerData> playersData;
         
         std::vector<Card> sharedCards;
         Street currentStreet = Street::preflop;
@@ -31,6 +31,7 @@ namespace pkr {
         
         void playRound();
         void playStreet();
+        void workAroundNewAction(Action action, PlayerData& dataOfPlayerWhoActed);
         
         void distributeBanks();
         
@@ -41,7 +42,7 @@ namespace pkr {
         
     public:
         Street getCurrentStreet();
-        bool isActionValid(Action action);
+        bool isActionValid(const Action& action);
         void setPlayers(std::vector<std::shared_ptr<Player>> players);
         virtual void playGame() = 0;
         std::vector<std::shared_ptr<Player>> getPlayerActions();

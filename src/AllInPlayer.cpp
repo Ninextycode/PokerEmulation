@@ -7,7 +7,7 @@ void AllInPlayer::markAsWinner() {
     
 }
 
-void AllInPlayer::preformAction(weak_ptr<Game> game) {
+void AllInPlayer::preformAction(const Game& currentGame) {
     
 }
 

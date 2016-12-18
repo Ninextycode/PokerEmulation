@@ -2,6 +2,8 @@
 #define DATA_STRUCTURES_H
 
 #include "headers.h"
+#include "game.h"
+#include "player.h"
 
 namespace pkr {
         
@@ -26,8 +28,13 @@ namespace pkr {
     };
     
     struct Hand {
+    public:
         Card c1;
-        Card  c2;
+        Card c2;
+        Hand(Card c1, Card c2s);
+    private:
+        Hand();        
+    friend std::ostream& operator<<(std::ostream& out, const Hand& hand);
     };
     
     class Deck {
@@ -77,15 +84,19 @@ namespace pkr {
     friend std::ostream& operator<<(std::ostream& out, const Action& action);
     };
 
+    class Player;
     class PlayerData {
-    private:
-        std::shared_ptr<Player> player;
-        Card card1, card2;
+    friend class Game; 
+    /*
+     * Game class is friend for it to being able 
+     * to assign a hand and prevent other classes from reading this hand
+     */
+    private: 
+        Hand hand;
     public:
+        std::shared_ptr<Player> player;        
         std::vector<Action> actions;
-        int money;
-        std::vector<>
-        
+        int money;       
     };
 }
 
