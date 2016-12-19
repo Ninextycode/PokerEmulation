@@ -95,21 +95,21 @@ void Game::playStreet() {
     while(endPlayerIndex != currentPlayerIndex) {
         auto pd = activePlayersData[currentPlayerIndex];
         Action newAction = pd.player->preformAction(*this);
-        workAroundNewAction(newAction, pd);
+        recievedNewAction(newAction, pd);
         currentPlayerIndex = (currentPlayerIndex + 1) % activePlayersData.size();
     }
 }
 
-void Game::workAroundNewAction(Action action, PlayerData& dataOfPlayerWhoActed) {
+void Game::recievedNewAction(Action action, PlayerData& dataOfPlayerWhoActed) {
     if(isActionValid(action)) {
-        
+        banks[0]
     }
 }
 
 void Game::distributeBanks() {
-   
+    
 }
 
 bool Game::isActionValid(const Action& action) {
-    throw runtime_error("Not implemented");
+    return banks[0].isActionValid(action);    
 }

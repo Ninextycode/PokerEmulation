@@ -55,11 +55,13 @@ namespace pkr {
         std::shared_ptr<Player> player;        
         std::vector<Action> actions;
         int money;       
+        bool active = true;
     };
     
     class Bank {
     private:
         bool active = true;
+        bool isSomeoneAllIn = false;
         int nextExpectedBidderIndex = 0;
         int maxBet = 0;
         
@@ -67,9 +69,13 @@ namespace pkr {
     private:
         std::vector<std::shared_ptr<PlayerData>> biddersData; 
         std::vector<int> bets;
+        bool isSplitRequired(int indexOfLastChangedData);
         bool isActive();
         bool isActionValid(Action action);
-        bool pllyAction(Action action);
+        void playAction(Action action);
+        
+        bool isPlayerAllIn(PlayerData& data);
+        bool didPlayerFolded(PlayerData& data);
     };
 }
 

@@ -32,7 +32,7 @@ namespace pkr {
         
         void playRound();
         void playStreet();
-        void workAroundNewAction(Action action, PlayerData& dataOfPlayerWhoActed);
+        void recievedNewAction(Action action, PlayerData& dataOfPlayerWhoActed);
         
         void distributeBanks();
         
@@ -40,10 +40,12 @@ namespace pkr {
         void dealFlop();
         void dealTurn();
         void dealRiver();
-        
+        int indexOfPlayerInPlayerData(const std::shared_ptr<Player> player);
+    
+        std::vector<Bank> banks;
     public:
         Street getCurrentStreet();
-        bool isActionValid(const Action& action);
+        bool isActionValid(Action action);
         void setPlayers(std::vector<std::shared_ptr<Player>> players);
         virtual void playGame() = 0;
         std::vector<std::shared_ptr<Player>> getPlayerActions();
