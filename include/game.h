@@ -4,25 +4,23 @@
 #include "headers.h"
 #include "player.h"
 #include "data_structs.h"
+#include "bank.h"
 
 namespace pkr {  
-    class Player;
-    class PlayerData;
-    
+   
     class Game {
     private:
         int button = 0;
         
         Deck deck;
-        std::vector<PlayerData> activePlayersData;
-        std::vector<PlayerData> playersData;
+        std::vector<std::shared_ptr<PlayerData>> playersData;
         
         std::vector<Card> sharedCards;
         Street currentStreet = Street::preflop;
         
         void prepareForRound();
         void prepareDeck();
-        void prepareActivePlayers();
+
         void moveButton();
         
         void playPreflop();
@@ -32,7 +30,7 @@ namespace pkr {
         
         void playRound();
         void playStreet();
-        void recievedNewAction(Action action, PlayerData& dataOfPlayerWhoActed);
+        void recievedNewAction(Action action);
         
         void distributeBanks();
         
@@ -42,11 +40,12 @@ namespace pkr {
         void dealRiver();
         int indexOfPlayerInPlayerData(const std::shared_ptr<Player> player);
     
-        std::vector<Bank> banks;
+        Bank bank;
     public:
+        Game(std::vector<std::shared_ptr<Player>>& player);
+        
         Street getCurrentStreet();
         bool isActionValid(Action action);
-        void setPlayers(std::vector<std::shared_ptr<Player>> players);
         virtual void playGame() = 0;
         std::vector<std::shared_ptr<Player>> getPlayerActions();
     };

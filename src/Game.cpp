@@ -1,17 +1,16 @@
 #include "game.h"
-#include "data_structs.h"
 
 using namespace std;
 using namespace pkr;
 
-    
-void Game::setPlayers(vector<shared_ptr<Player> > players) {
+Game::Game(vector<shared_ptr<Player>>& players) {
     for(auto player_ptr: players) {
-        PlayerData pd;
-        pd.player = player_ptr;
-        this->playersData.push_back(pd);
+        this->playersData.push_back(make_shared<PlayerData>());
+        playersData.back()->player = player_ptr;
     }
+    bank = Bank(playersData);
 }
+
 
 void Game::playRound() {
     prepareForRound();
@@ -26,7 +25,6 @@ void Game::playRound() {
 
 void Game::prepareForRound() {
     prepareDeck();
-    prepareActivePlayers();
     moveButton();
 }
 
@@ -34,17 +32,6 @@ void Game::prepareDeck() {
     deck = Deck();
     deck.shuffle();
 }
-
-void Game::prepareActivePlayers() {
-    activePlayersData = vector<PlayerData>();
-    
-    for(int i = 0; i < playersData.size(); i++) {
-        auto pd = playersData[(i+button) % playersData.size()];
-        if(pd.money > 0) {
-            activePlayersData.push_back(pd);
-        }
-    };
-};
 
 void Game::moveButton() {
     button =  (button + 1) % playersData.size();
@@ -55,8 +42,10 @@ void Game::playPreflop() {
 }
 
 void Game::dealHoleCards() {
-    for(auto pd: activePlayersData) {
-        pd.hand = Hand(deck.popCard(), deck.popCard());
+    for(auto pd: playersData) {
+        if(pd->active) {
+            pd->hand = Hand(deck.popCard(), deck.popCard());
+        }
     }
 }
 
@@ -90,26 +79,27 @@ void Game::dealRiver(){
 }
 
 void Game::playStreet() {
-    int endPlayerIndex = activePlayersData.size();
-    int currentPlayerIndex = 0;
-    while(endPlayerIndex != currentPlayerIndex) {
-        auto pd = activePlayersData[currentPlayerIndex];
-        Action newAction = pd.player->preformAction(*this);
-        recievedNewAction(newAction, pd);
-        currentPlayerIndex = (currentPlayerIndex + 1) % activePlayersData.size();
+    int actorIndex = 0;
+    while(bank.expectMoreBets()) {
+        while(!playersData[actorIndex]->active) {
+            actorIndex++;
+        }
+        Action newAction = playersData[actorIndex]->player->preformAction(*this);
+        recievedNewAction(newAction);
     }
 }
 
-void Game::recievedNewAction(Action action, PlayerData& dataOfPlayerWhoActed) {
+void Game::recievedNewAction(Action action) {
     if(isActionValid(action)) {
-        banks[0]
+        bank.playAction(action);
     }
+    throw new runtime_error("invalid action");
 }
 
 void Game::distributeBanks() {
     
 }
 
-bool Game::isActionValid(const Action& action) {
-    return banks[0].isActionValid(action);    
+bool Game::isActionValid(Action action) {
+    return bank.isActionValid(action);    
 }

@@ -1,4 +1,5 @@
 #include "data_structs.h"
+#include "player.h"
 
 using namespace pkr;
 using namespace std;

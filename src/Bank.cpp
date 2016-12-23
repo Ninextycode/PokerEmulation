@@ -1,48 +1,61 @@
-#include "data_structs.h"
+#include "bank.h"
 
 using namespace std;
 using namespace pkr;
 
+Bank::Bank(){}
+
 Bank::Bank(const vector<std::shared_ptr<PlayerData>>& biddersData) {
     this->biddersData.insert(this->biddersData.end(), biddersData.begin(), biddersData.end());
+    for(int i = 0; i < this->biddersData.size(); i++) {
+        if(this->biddersData[i]->active) {
+            this->activeNotAllInPlayersNumber++;
+        }
+    }
+    resetForNewStreet();
 }
 
 void Bank::playAction(Action action) {
-    if(! isActionValid(action)) {
+    if(!isActionValid(action)) {
         throw runtime_error("Invalid action");
     }
     int index = nextExpectedBidderIndex;
-    PlayerData& playerD = biddersData[index];
+    int bet = action.getMoney();
+        
+    lastBidderIndex = index;
+    
+    PlayerData& playerD = *biddersData[index];
     playerD.actions.push_back(action);
-    playerD.money -= action.getMoney();
+    playerD.money -= bet;
     
-    maxBet = max(maxBet, action.getMoney());
-    
-    if(isPlayerAllIn(playerD)) {
-        isSomeoneAllIn = true;
+    if(bet > maxBet) {
+        bidderIndexToActLast = previousActiveNotAllInPlayerIndex(index);
     }
     
-    if(didPlayerFolded(playerD)) {
+    if(didPlayerFold(playerD)) {
         playerD.active = false;
-        biddersData.erase(biddersData.begin() + index); //TODO try use LINKED_LIST for faster erasing
+        activeNotAllInPlayersNumber--;
     }  
     
-    nextExpectedBidderIndex = (index + 1) % biddersData.size();
+
 }
 
 bool Bank::isPlayerAllIn(PlayerData& data) {
-    return data.money = 0;
+    return data.money == 0 && data.active;
 }
 
-bool Bank::didPlayerFolded(PlayerData& data) {
-    return data.actions.back().getMoney() == 0 && maxBet == 0;
+bool Bank::isPlayerActiveNotAllIn(PlayerData& data) {
+    return (!data.active && !isPlayerAllIn(data));
 }
 
-bool Bank::isSplitRequired(int indexOfLastChangedData) {
-    
+bool Bank::didPlayerFold(PlayerData& data) {
+    return data.actions.back().getMoney() == 0 && maxBet > 0;
 }
 
 bool Bank::isActionValid(Action action) {
+    if(!expectMoreBets()) {
+        return false; // no more actions expected
+    }
     if(action.getPlayer().lock() != biddersData[nextExpectedBidderIndex]->player) {
         return false; //wrong order of actions
     } 
@@ -60,6 +73,50 @@ bool Bank::isActionValid(Action action) {
     return false;   
 }
 
-bool Bank::isActive() {
-    return active;
+void Bank::resetForNewStreet() {
+    this->nextExpectedBidderIndex = firstActiveNotAllInPlayerIndex();
+    this->bidderIndexToActLast = lastActiveNotAllInPlayerIndex();
+    this->lastBidderIndex = -1; //noonae actually cated
+}
+
+bool Bank::expectMoreBets() {
+    return activeNotAllInPlayersNumber > 1 && lastBidderIndex == bidderIndexToActLast;
+}
+
+int Bank::nextActiveNotAllInPlayerIndex(int index) {
+    for(int i = 0; i < this->biddersData.size(); i++) {
+        index = (index + 1) % biddersData.size();
+        if (isPlayerActiveNotAllIn(*biddersData[index])) {
+            return index;
+        }
+    } 
+    throw runtime_error("cannot find next player which can act");
+}
+
+int Bank::previousActiveNotAllInPlayerIndex(int index) {
+    for(int i = 0; i < this->biddersData.size(); i++) {
+        index = (index + biddersData.size() - 1) % biddersData.size();
+        if (isPlayerActiveNotAllIn(*biddersData[index])) {
+            return index;
+        }
+    } 
+    throw runtime_error("cannot find previous player which can act");
+}
+
+int Bank::firstActiveNotAllInPlayerIndex() {
+    for(int i = 0; i < this->biddersData.size(); i++) {
+        if (isPlayerActiveNotAllIn(*biddersData[i])) {
+            return i;
+        }
+    } 
+    throw runtime_error("cannot find player which can act");
+}
+
+int Bank::lastActiveNotAllInPlayerIndex() {
+    for(int i = this->biddersData.size()-1; i >= 0 ; i--) {
+        if (isPlayerActiveNotAllIn(*biddersData[i])) {
+            return i;
+        }
+    } 
+    throw runtime_error("cannot find player which can act");
 }

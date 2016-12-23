@@ -4,12 +4,10 @@
 #include "headers.h"
 
 #include "simple_data_structs.h"
-#include "game.h"
 #include "data_structs.h"
 
 namespace pkr{
     class Game;
-    class Action;
     /*
      * Player class contains the logic of decisions, 
      * but not the data used to make this decisions.
