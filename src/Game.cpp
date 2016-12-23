@@ -26,6 +26,12 @@ void Game::playRound() {
 void Game::prepareForRound() {
     prepareDeck();
     moveButton();
+    setBankBlinds();
+}
+
+void Game::setBankBlinds() {
+    bank.setBigBlind(this->bigBlind);
+    bank.setSmallBlind(this->smallBlind);
 }
 
 void Game::prepareDeck() {

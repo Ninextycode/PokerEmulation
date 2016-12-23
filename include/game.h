@@ -11,6 +11,8 @@ namespace pkr {
     class Game {
     private:
         int button = 0;
+        int bigBlind = 1;
+        int smallBlind = 1;
         
         Deck deck;
         std::vector<std::shared_ptr<PlayerData>> playersData;
@@ -22,6 +24,7 @@ namespace pkr {
         void prepareDeck();
 
         void moveButton();
+        void setBankBlinds();
         
         void playPreflop();
         void playFlop();

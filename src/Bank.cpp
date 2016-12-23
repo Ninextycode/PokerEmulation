@@ -15,6 +15,15 @@ Bank::Bank(const vector<std::shared_ptr<PlayerData>>& biddersData) {
     resetForNewStreet();
 }
 
+Bank::setBigBlind(int bigBlind) {
+    this->bigBlind = bigBlind;
+}
+
+Bank::setSmallBlind(int smallBlind) {
+    this->smallBlind = smallBlind;
+}
+
+
 void Bank::playAction(Action action) {
     if(!isActionValid(action)) {
         throw runtime_error("Invalid action");

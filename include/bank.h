@@ -25,7 +25,8 @@ namespace pkr {
         int maxBet = 0;
         int activeNotAllInPlayersNumber = 0;
         
-        
+        int bigBlind;
+        int smallBlind;
         
         bool isPlayerAllIn(PlayerData& data);
         bool didPlayerFold(PlayerData& data);
@@ -39,6 +40,9 @@ namespace pkr {
         std::vector<std::shared_ptr<PlayerData>> biddersData; 
          
     public:
+        void setBigBlind(int bigBlind);
+        void setSmallBlind(int smallBlind);
+        
         Bank();
         Bank(const std::vector<std::shared_ptr<PlayerData>>& biddersDara);
 
