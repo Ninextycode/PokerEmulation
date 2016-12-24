@@ -17,6 +17,8 @@
 #ifndef BANK_H
 #define BANK_H
 namespace pkr {
+    class Game;
+    
     class Bank {
     private:        
         int lastBidderIndex = 0;
@@ -24,10 +26,13 @@ namespace pkr {
         int bidderIndexToActLast;
         int maxBet = 0;
         int activeNotAllInPlayersNumber = 0;
+        int lastRaisedBy = 0; //if one puts 125 in bank and another puts 360, then lastRaisedBy = (360-125) = 235
         
-        int bigBlind;
-        int smallBlind;
+        bool smallBlindPut = false;
+        bool bigBlindPut = false;
         
+        std::vector<int> bets;
+        std::vector<std::tuple<int, int>> getPowersOfPlayersCombinations();
         bool isPlayerAllIn(PlayerData& data);
         bool didPlayerFold(PlayerData& data);
         bool isPlayerActiveNotAllIn(PlayerData& data);
@@ -37,18 +42,19 @@ namespace pkr {
         
         int lastActiveNotAllInPlayerIndex();
         int firstActiveNotAllInPlayerIndex();
-        std::vector<std::shared_ptr<PlayerData>> biddersData; 
-         
-    public:
-        void setBigBlind(int bigBlind);
-        void setSmallBlind(int smallBlind);
-        
-        Bank();
-        Bank(const std::vector<std::shared_ptr<PlayerData>>& biddersDara);
 
+        Game& game;
+                
+    public:
+
+        Bank(Game& game);
+        void cleanForRound();
         bool isActionValid(Action action);
         void playAction(Action action);
         void resetForNewStreet();
+        
+        void distributeChips();
+        
         bool expectMoreBets();
 
     };

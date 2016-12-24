@@ -9,6 +9,7 @@
 namespace pkr {  
    
     class Game {
+    friend class Bank;
     private:
         int button = 0;
         int bigBlind = 1;
@@ -24,7 +25,6 @@ namespace pkr {
         void prepareDeck();
 
         void moveButton();
-        void setBankBlinds();
         
         void playPreflop();
         void playFlop();
@@ -46,8 +46,7 @@ namespace pkr {
         Bank bank;
     public:
         Game(std::vector<std::shared_ptr<Player>>& player);
-        
-        Street getCurrentStreet();
+
         bool isActionValid(Action action);
         virtual void playGame() = 0;
         std::vector<std::shared_ptr<Player>> getPlayerActions();

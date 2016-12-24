@@ -3,12 +3,11 @@
 using namespace std;
 using namespace pkr;
 
-Game::Game(vector<shared_ptr<Player>>& players) {
+Game::Game(vector<shared_ptr<Player>>& players): bank(*this) {
     for(auto player_ptr: players) {
         this->playersData.push_back(make_shared<PlayerData>());
         playersData.back()->player = player_ptr;
     }
-    bank = Bank(playersData);
 }
 
 
@@ -26,12 +25,7 @@ void Game::playRound() {
 void Game::prepareForRound() {
     prepareDeck();
     moveButton();
-    setBankBlinds();
-}
-
-void Game::setBankBlinds() {
-    bank.setBigBlind(this->bigBlind);
-    bank.setSmallBlind(this->smallBlind);
+    bank.cleanForRound();
 }
 
 void Game::prepareDeck() {
@@ -103,7 +97,7 @@ void Game::recievedNewAction(Action action) {
 }
 
 void Game::distributeBanks() {
-    
+    bank.distributeChips();
 }
 
 bool Game::isActionValid(Action action) {

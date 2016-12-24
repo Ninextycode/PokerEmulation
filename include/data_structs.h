@@ -46,7 +46,12 @@ namespace pkr {
      * Game class is friend for it to being able 
      * to assign a hand and prevent other classes from reading this hand
      */
-    friend class Game; 
+    friend class Game;
+    /*
+     * Bank class is friend for it to being able 
+     * to get the strength of hands and prevent other classes from reading this hand
+     */
+    friend class Bank;
     private: 
         Hand hand;
     public:
@@ -54,6 +59,7 @@ namespace pkr {
         std::vector<Action> actions;
         int money;       
         bool active = true;
+        bool isAllIn();
     };
 }
 

@@ -10,7 +10,7 @@ namespace pkr {
     std::ostream& operator<<(std::ostream& out, const Suit& suit);
     
     enum Rank{
-        _2, _3, _4, _5, _6, _7, _8, _9, T, J, Q, K, A
+        A, K, Q, J,  T, _9, _8, _7, _6, _5, _4, _3, _2
     };
     std::ostream& operator<<(std::ostream& out, const Rank& rank);
     
@@ -20,6 +20,7 @@ namespace pkr {
         Suit suit;
         Card(Rank rank, Suit suit);
         Card();
+        int toInt();
     friend std::ostream& operator<<(std::ostream& out, const Card& card);
     };
     
