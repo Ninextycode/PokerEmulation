@@ -54,12 +54,16 @@ namespace pkr {
     friend class Bank;
     private: 
         Hand hand;
-    public:
+        int money;   
         std::shared_ptr<Player> player;        
         std::vector<Action> actions;
-        int money;       
+
         bool active = true;
         bool isAllIn();
+    public:
+        int getMoney();
+        std::vector<Action> getActions();
+        std::shared_ptr<Player> getPlayer(); 
     };
 }
 

@@ -14,7 +14,7 @@ namespace pkr{
      * Data is stored in Game class.
      */
 
-    class Player {
+    class Player : public std::enable_shared_from_this<Player> {
     private:
         Card card1, card2;
     public:
@@ -32,6 +32,7 @@ namespace pkr{
         void markAsWinner() override;
         std::string getName() override;
         Action preformAction(const Game& currentGame) override;
+        int myMoney(const Game& currentGame);
     };
 }
 

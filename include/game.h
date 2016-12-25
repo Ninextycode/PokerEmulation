@@ -10,16 +10,16 @@ namespace pkr {
    
     class Game {
     friend class Bank;
-    private:
+    protected:
         int button = 0;
         int bigBlind = 1;
         int smallBlind = 1;
-        
+        void playRound();
+    private:
         Deck deck;
-        std::vector<std::shared_ptr<PlayerData>> playersData;
-        
-        std::vector<Card> sharedCards;
+
         Street currentStreet = Street::preflop;
+        std::vector<Card> sharedCards;
         
         void prepareForRound();
         void prepareDeck();
@@ -31,9 +31,9 @@ namespace pkr {
         void playTurn();
         void playRiver();
         
-        void playRound();
         void playStreet();
         void recievedNewAction(Action action);
+        void cleanSharedCards();
         
         void distributeBanks();
         
@@ -45,14 +45,26 @@ namespace pkr {
     
         Bank bank;
     public:
-        Game(std::vector<std::shared_ptr<Player>>& player);
-
+        
+        std::vector<std::shared_ptr<PlayerData>> playersData;
+                
+        Game();
+        
+        int countPlayersWithChips();
+        void setPlayers(std::vector<std::shared_ptr<Player>>& players);
+            
         bool isActionValid(Action action);
         virtual void playGame() = 0;
         std::vector<std::shared_ptr<Player>> getPlayerActions();
+        
+        Street getStreet() const;
+        
+        virtual ~Game();
     };
     
-    
+    class OneTwoGame : public Game {
+        void playGame() override;
+    };
 }
 
 #endif /* GAME_H */

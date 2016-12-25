@@ -3,13 +3,34 @@
 using namespace std;
 using namespace pkr;
 
-Game::Game(vector<shared_ptr<Player>>& players): bank(*this) {
+Game::Game(): bank(*this) {
+
+}
+
+Street Game::getStreet() const {
+    return this->currentStreet;
+}
+
+Game::~Game() {
+    
+}
+
+int Game::countPlayersWithChips() {
+    int n = 0;
+    for(auto pd: playersData) {
+        if(pd->money > 0) {
+            n++;
+        }
+    }
+    return n;
+}
+
+void Game::setPlayers(std::vector<std::shared_ptr<Player> >& players) {
     for(auto player_ptr: players) {
         this->playersData.push_back(make_shared<PlayerData>());
         playersData.back()->player = player_ptr;
     }
 }
-
 
 void Game::playRound() {
     prepareForRound();
@@ -25,7 +46,13 @@ void Game::playRound() {
 void Game::prepareForRound() {
     prepareDeck();
     moveButton();
+    cleanSharedCards();
     bank.cleanForRound();
+}
+
+void Game::cleanSharedCards() {
+    sharedCards.clear();
+    sharedCards.reserve(7);
 }
 
 void Game::prepareDeck() {
@@ -34,11 +61,15 @@ void Game::prepareDeck() {
 }
 
 void Game::moveButton() {
-    button =  (button + 1) % playersData.size();
+    do {
+        button =  (button + 1) % playersData.size();
+    } while(!(playersData[button]->money > 0));
 }
 
 void Game::playPreflop() {
+    this->currentStreet = Street::preflop;
     dealHoleCards();
+    playStreet();
 }
 
 void Game::dealHoleCards() {
@@ -50,6 +81,7 @@ void Game::dealHoleCards() {
 }
 
 void Game::playFlop() {
+    this->currentStreet = Street::flop;
     dealFlop();
     playStreet();
 }
@@ -61,6 +93,7 @@ void Game::dealFlop(){
 }
 
 void Game::playTurn() {
+    this->currentStreet = Street::turn;
     dealTurn();
     playStreet();
 }
@@ -70,6 +103,7 @@ void Game::dealTurn(){
 }
 
 void Game::playRiver() {
+    this->currentStreet = Street::river;
     dealRiver();
     playStreet();
 }

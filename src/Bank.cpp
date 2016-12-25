@@ -12,7 +12,7 @@ Bank::Bank(Game& game):  game(game) {
 
 void Bank::cleanForRound() {
     for(int i = 0; i < bets.size(); i++) {
-        
+        bets[i] = 0;
     }
 }
 
