@@ -4,8 +4,12 @@
 using namespace pkr;
 using namespace std;
 
+AllInPlayer::AllInPlayer(std::string name) {
+    this->name = name;
+}
+
 void AllInPlayer::markAsWinner() {
-    
+    cout << name << " won" << endl;
 }
 
 Action AllInPlayer::preformAction(const Game& game) {
@@ -14,9 +18,10 @@ Action AllInPlayer::preformAction(const Game& game) {
 }
 
 int AllInPlayer::myMoney(const Game& currentGame) {
-    for(auto pd: currentGame.playersData) {
-        if(pd->getPlayer() == shared_from_this()) {
-            return pd->getMoney();
+    auto data = currentGame.getPlayersData();
+    for(auto pd: data) {
+        if(pd.getPlayer() == shared_from_this()) {
+            return pd.getMoney();
         }
     }
 }

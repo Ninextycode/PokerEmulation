@@ -8,7 +8,7 @@ HEADERSDIR = include
 SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJECTS = $(patsubst $(SRCDIR)/%, $(BUILDDIR)/% , $(SOURCES:.cpp=.o))
 HEADERS =  $(shell find $(HEADERSDIR) -type f -name *.h)
-CFLAGS = -std=c++14
+CFLAGS = -std=c++14 -g
 INC = -I $(HEADERSDIR)
 
 $(TARGET): $(OBJECTS)

@@ -29,6 +29,7 @@ namespace pkr{
     private:
         std::string name;
     public:
+        AllInPlayer(std::string name);
         void markAsWinner() override;
         std::string getName() override;
         Action preformAction(const Game& currentGame) override;

@@ -19,6 +19,10 @@ shared_ptr<Player> PlayerData::getPlayer() {
     return this->player;
 }
 
+bool PlayerData::isActive() {
+    return active;
+}
+
 Player::~Player() {
     
 }

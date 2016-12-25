@@ -4,6 +4,7 @@ using namespace pkr;
 using namespace std;
 
 int Card::toInt() {
+    int x = rank * 4 + suit;
     return rank * 4 + suit;
 }
 
@@ -13,7 +14,8 @@ Card::Card(Rank rank, Suit suit) {
 }
 
 Card::Card(){
-    
+    this->rank = (Rank)0;
+    this->suit = (Suit)0;
 }
 
 ostream& pkr::operator <<(std::ostream& out, const Card& card) {

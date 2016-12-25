@@ -25,7 +25,8 @@ namespace pkr {
         int nextExpectedBidderIndex = 0;
         int bidderIndexToActLast;
         int maxBet = 0;
-        int activeNotAllInPlayersNumber = 0;
+        int activePlayersNumber = 0;
+        int notAllInPlayersNumber = 0;
         int lastRaisedBy = 0; //if one puts 125 in bank and another puts 360, then lastRaisedBy = (360-125) = 235
         
         bool smallBlindPut = false;
@@ -39,19 +40,20 @@ namespace pkr {
         
         int previousActiveNotAllInPlayerIndex(int index);
         int nextActiveNotAllInPlayerIndex(int index);
-        
-        int lastActiveNotAllInPlayerIndex();
-        int firstActiveNotAllInPlayerIndex();
 
+        void resetBets();
         Game& game;
                 
     public:
 
         Bank(Game& game);
-        void cleanForRound();
+        void resetForNewRound();
+        void resetForNewStreet();
+                
         bool isActionValid(Action action);
         void playAction(Action action);
-        void resetForNewStreet();
+
+        int getNextExpectedBidderIndex();
         
         void distributeChips();
         

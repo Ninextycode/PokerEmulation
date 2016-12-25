@@ -15,11 +15,26 @@ namespace pkr {
         int bigBlind = 1;
         int smallBlind = 1;
         void playRound();
+        
+        virtual void onStartRound() = 0;
+        virtual void onCardsDealed(std::shared_ptr<Player> player, Hand hand) = 0;
+        virtual void onFlopDealed() = 0;
+        virtual void onTurnDealed() =  0;
+        virtual void onRiverDealed() = 0;
+        virtual void onFinalCombinations(std::vector<Hand> hands, const std::vector<Card>& sharedCards) = 0;
+        virtual void onGameEnd() = 0;
+        virtual void onNewAction(Action action) = 0;
+        
+        virtual int getInitialStack() = 0;
+        
+        std::vector<Card> sharedCards;
+        
+        std::vector<PlayerData> playersData;
     private:
         Deck deck;
 
         Street currentStreet = Street::preflop;
-        std::vector<Card> sharedCards;
+
         
         void prepareForRound();
         void prepareDeck();
@@ -30,13 +45,16 @@ namespace pkr {
         void playFlop();
         void playTurn();
         void playRiver();
+        void afterRoundPlayed();
         
+        void prepareForNextStreet();
         void playStreet();
         void recievedNewAction(Action action);
         void cleanSharedCards();
         
         void distributeBanks();
         
+        void placeBlinds();
         void dealHoleCards();
         void dealFlop();
         void dealTurn();
@@ -46,12 +64,12 @@ namespace pkr {
         Bank bank;
     public:
         
-        std::vector<std::shared_ptr<PlayerData>> playersData;
+        const std::vector<PlayerData>& getPlayersData() const;
                 
         Game();
         
         int countPlayersWithChips();
-        void setPlayers(std::vector<std::shared_ptr<Player>>& players);
+        void setPlayers(std::vector<std::shared_ptr<Player>> players);
             
         bool isActionValid(Action action);
         virtual void playGame() = 0;
@@ -63,6 +81,18 @@ namespace pkr {
     };
     
     class OneTwoGame : public Game {
+    protected:
+        int getInitialStack() override;
+        
+        void onStartRound() override;
+        void onCardsDealed(std::shared_ptr<Player> player, Hand hand) override;
+        void onFlopDealed() override;
+        void onTurnDealed() override;
+        void onRiverDealed() override;
+        void onFinalCombinations(std::vector<Hand> hands, const std::vector<Card>& sharedCards) override;        
+        void onGameEnd() override;
+        void onNewAction(Action action) override;
+    public:
         void playGame() override;
     };
 }

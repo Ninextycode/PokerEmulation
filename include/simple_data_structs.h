@@ -5,12 +5,12 @@
 
 namespace pkr {
     enum Suit {
-        s, p, d, f
+        s=0, h, d, c
     };
     std::ostream& operator<<(std::ostream& out, const Suit& suit);
     
     enum Rank{
-        A, K, Q, J,  T, _9, _8, _7, _6, _5, _4, _3, _2
+        A=0, K, Q, J,  T, _9, _8, _7, _6, _5, _4, _3, _2
     };
     std::ostream& operator<<(std::ostream& out, const Rank& rank);
     

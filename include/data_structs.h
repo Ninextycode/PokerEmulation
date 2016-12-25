@@ -58,12 +58,13 @@ namespace pkr {
         std::shared_ptr<Player> player;        
         std::vector<Action> actions;
 
-        bool active = true;
-        bool isAllIn();
+        bool active = true;       
     public:
         int getMoney();
         std::vector<Action> getActions();
         std::shared_ptr<Player> getPlayer(); 
+        bool isActive();
+        bool isAllIn();
     };
 }
 

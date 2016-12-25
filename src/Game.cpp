@@ -10,6 +10,9 @@ Game::Game(): bank(*this) {
 Street Game::getStreet() const {
     return this->currentStreet;
 }
+const vector<PlayerData>& Game::getPlayersData() const {
+    return this->playersData;
+}
 
 Game::~Game() {
     
@@ -18,21 +21,27 @@ Game::~Game() {
 int Game::countPlayersWithChips() {
     int n = 0;
     for(auto pd: playersData) {
-        if(pd->money > 0) {
+        if(pd.money > 0) {
             n++;
         }
     }
     return n;
 }
 
-void Game::setPlayers(std::vector<std::shared_ptr<Player> >& players) {
+void Game::setPlayers(std::vector<std::shared_ptr<Player> > players) {
     for(auto player_ptr: players) {
-        this->playersData.push_back(make_shared<PlayerData>());
-        playersData.back()->player = player_ptr;
+        PlayerData pd;       
+        pd.player = player_ptr;
+        pd.money = getInitialStack();
+        this->playersData.push_back(pd);
     }
 }
 
 void Game::playRound() {
+    if(this->countPlayersWithChips() < 2) {
+        throw runtime_error("not enough players for this round");
+    }
+    
     prepareForRound();
     
     playPreflop();
@@ -41,13 +50,15 @@ void Game::playRound() {
     playRiver();
     
     distributeBanks();
+    afterRoundPlayed();
 }
 
 void Game::prepareForRound() {
     prepareDeck();
     moveButton();
     cleanSharedCards();
-    bank.cleanForRound();
+    bank.resetForNewRound();
+    onStartRound();
 }
 
 void Game::cleanSharedCards() {
@@ -63,19 +74,34 @@ void Game::prepareDeck() {
 void Game::moveButton() {
     do {
         button =  (button + 1) % playersData.size();
-    } while(!(playersData[button]->money > 0));
+    } while(!(playersData[button].money > 0));
 }
 
 void Game::playPreflop() {
     this->currentStreet = Street::preflop;
+    placeBlinds();
     dealHoleCards();
     playStreet();
 }
 
+void Game::placeBlinds() {
+    auto pd = playersData[bank.getNextExpectedBidderIndex()];
+    Action smallBlindAction = Action::ActionBuilder()
+            .setMoney(min(smallBlind, pd.money)).setPlayer(pd.player).setStreet(currentStreet).build();
+    recievedNewAction(smallBlindAction);
+    
+    pd = playersData[bank.getNextExpectedBidderIndex()];
+    Action bigBlindAction = Action::ActionBuilder()
+            .setMoney(min(bigBlind, pd.money)).setPlayer(pd.player).setStreet(currentStreet).build();
+    recievedNewAction(bigBlindAction);
+}
+
 void Game::dealHoleCards() {
-    for(auto pd: playersData) {
-        if(pd->active) {
-            pd->hand = Hand(deck.popCard(), deck.popCard());
+    for(auto& pd: playersData) {
+        if(pd.active) {
+            Hand h(deck.popCard(), deck.popCard());
+            this->onCardsDealed(pd.player, h);
+            pd.hand = h;
         }
     }
 }
@@ -90,6 +116,7 @@ void Game::dealFlop(){
     sharedCards.push_back(deck.popCard());
     sharedCards.push_back(deck.popCard());
     sharedCards.push_back(deck.popCard());
+    this->onFlopDealed();
 }
 
 void Game::playTurn() {
@@ -100,6 +127,7 @@ void Game::playTurn() {
 
 void Game::dealTurn(){
     sharedCards.push_back(deck.popCard());
+    this->onTurnDealed();
 }
 
 void Game::playRiver() {
@@ -110,24 +138,40 @@ void Game::playRiver() {
 
 void Game::dealRiver(){
     sharedCards.push_back(deck.popCard());
+    this->onRiverDealed();
 }
 
 void Game::playStreet() {
-    int actorIndex = 0;
+    prepareForNextStreet();
+
     while(bank.expectMoreBets()) {
-        while(!playersData[actorIndex]->active) {
-            actorIndex++;
-        }
-        Action newAction = playersData[actorIndex]->player->preformAction(*this);
+        Action newAction = playersData[bank.getNextExpectedBidderIndex()].player->preformAction(*this);
         recievedNewAction(newAction);
     }
+    
+}
+
+void Game::afterRoundPlayed() {
+    vector<Hand> hands;
+    hands.reserve(playersData.size());
+    for(auto pd : playersData) {
+        hands.push_back(pd.hand);
+    }
+    this->onFinalCombinations(hands, sharedCards);
+    this->onGameEnd();
+}
+
+void Game::prepareForNextStreet() {
+    bank.resetForNewStreet();
 }
 
 void Game::recievedNewAction(Action action) {
     if(isActionValid(action)) {
         bank.playAction(action);
+        onNewAction(action);
+    } else {
+        throw new runtime_error("invalid action");
     }
-    throw new runtime_error("invalid action");
 }
 
 void Game::distributeBanks() {

@@ -1,5 +1,5 @@
 #include "evaluator.h"
-#include "SevenEval.h"
+#include "evaluator/SevenEval.h"
 
 using namespace pkr;
 using namespace std;

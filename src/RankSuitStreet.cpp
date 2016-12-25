@@ -71,14 +71,14 @@ ostream& pkr::operator<<(ostream& out, const Suit& suit) {
         case s:
             out << "s";
             break;
-        case p:
-            out << "p";
+        case h:
+            out << "h";
             break;
         case d:
             out << "d";
             break;
-        case f:
-            out << "f";
+        case c:
+            out << "c";
             break;
     }
     return out;
