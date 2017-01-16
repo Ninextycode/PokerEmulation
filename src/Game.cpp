@@ -83,6 +83,7 @@ void Game::moveButton() {
 
 void Game::playPreflop() {
     this->currentStreet = Street::preflop;
+    prepareForNextStreet();
     placeBlinds();
     dealHoleCards();
     playStreet();
@@ -113,6 +114,7 @@ void Game::dealHoleCards() {
 void Game::playFlop() {
     this->currentStreet = Street::flop;
     dealFlop();
+    prepareForNextStreet();
     playStreet();
 }
 
@@ -126,6 +128,7 @@ void Game::dealFlop(){
 void Game::playTurn() {
     this->currentStreet = Street::turn;
     dealTurn();
+    prepareForNextStreet();
     playStreet();
 }
 
@@ -137,6 +140,7 @@ void Game::dealTurn(){
 void Game::playRiver() {
     this->currentStreet = Street::river;
     dealRiver();
+    prepareForNextStreet();
     playStreet();
 }
 
@@ -146,8 +150,6 @@ void Game::dealRiver(){
 }
 
 void Game::playStreet() {
-    prepareForNextStreet();
-
     while(bank->expectMoreBets()) {
         Action newAction = playersData[bank->getNextExpectedBidderIndex()].player->preformAction(*this);
         recievedNewAction(newAction);

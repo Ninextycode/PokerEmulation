@@ -19,7 +19,7 @@ void Deck::refill() {
 void Deck::shuffle() {
     refill();
     std::srand(std::time(nullptr));
-    // random_shuffle(this->cards.begin(), this->cards.end());
+    random_shuffle(this->cards.begin(), this->cards.end());
 }
 
 Card Deck::popCard() {

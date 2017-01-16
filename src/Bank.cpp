@@ -18,9 +18,14 @@ void Bank::resetBets() {
 }
 
 void Bank::resetForNewStreet() {
-    this->nextExpectedBidderIndex = nextActiveNotAllInPlayerIndex(game.button);
+    if(this->game.currentStreet == Street::preflop && this->activePlayersNumber == 2) {
+        this->nextExpectedBidderIndex = // adjustment for heads ups
+                nextActiveNotAllInPlayerIndex(nextActiveNotAllInPlayerIndex(game.button));
+    } else {
+        this->nextExpectedBidderIndex = nextActiveNotAllInPlayerIndex(game.button);
+    }
     this->bidderIndexToActLast = previousActiveNotAllInPlayerIndex(nextExpectedBidderIndex);
-    this->lastBidderIndex = -1; //noone actually acted on this street
+    this->lastBidderIndex = -1; // noone actually acted on this street
     this->notAllInPlayersNumber = 0;
     this->activePlayersNumber = 0;
     for(auto pd: game.playersData) {
@@ -149,7 +154,6 @@ void Bank::distributeChips() {
         int betOfThisPlayer = bets[get<0>(pos_pow)];
 
         for(int j = i; j < positions_powers.size(); j++) {
-            cout << betOfThisPlayer << endl;
             moneyToBeGiven += min(bets[j], betOfThisPlayer);
             bets[j] -=  min(bets[j], betOfThisPlayer); //exclude money won by this players from common bank 
         }

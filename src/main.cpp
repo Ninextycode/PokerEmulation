@@ -7,12 +7,12 @@ using namespace std;
 using namespace pkr;
 
 int main(int argc, char** argv) {
-    cout << 123 << endl;
     shared_ptr<Deck> deck(make_shared<ConstantDeck>());
-    OneTwoGame game(deck);
+    OneTwoGame game;
     shared_ptr<Player> p1(make_shared<AllInPlayer>("Nick"));
     shared_ptr<Player> p2(make_shared<AllInPlayer>("Max"));
-    game.setPlayers({p1, p2});
+    shared_ptr<Player> p3(make_shared<AllInPlayer>("Don"));
+    game.setPlayers({p1, p2, p3});
 
     game.playGame();
 
