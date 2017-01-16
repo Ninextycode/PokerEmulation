@@ -1,6 +1,4 @@
 #include "bank.h"
-#include "game.h"
-#include "evaluator.h"
 
 using namespace std;
 using namespace pkr;
@@ -15,13 +13,14 @@ void Bank::resetForNewRound() {
 
 void Bank::resetBets() {
     bets.resize(game.playersData.size(), 0);
+    this->bigBlindPut = false;
+    this->smallBlindPut = false; 
 }
 
 void Bank::resetForNewStreet() {
     this->nextExpectedBidderIndex = nextActiveNotAllInPlayerIndex(game.button);
     this->bidderIndexToActLast = previousActiveNotAllInPlayerIndex(nextExpectedBidderIndex);
     this->lastBidderIndex = -1; //noone actually acted on this street
-    
     this->notAllInPlayersNumber = 0;
     this->activePlayersNumber = 0;
     for(auto pd: game.playersData) {
@@ -34,7 +33,7 @@ void Bank::resetForNewStreet() {
 
 void Bank::playAction(Action action) {
     if(!isActionValid(action)) {
-        throw runtime_error("Invalid action");
+        throw wrong_action("Invalid action");
     }
     int index = nextExpectedBidderIndex;
     nextExpectedBidderIndex = nextActiveNotAllInPlayerIndex(index);
@@ -90,17 +89,24 @@ bool Bank::isActionValid(Action action) {
         return false; // no more actions expected
     }
     
-    if(!smallBlindPut) {
-        return action.getMoney() == game.smallBlind;
-    }
-    
-    if(!bigBlindPut) {
-        return action.getMoney() == game.bigBlind;
-    }
-    
     if(action.getPlayer().lock() != game.playersData[nextExpectedBidderIndex].player) {
         return false; //wrong order of actions
     } 
+    
+        
+    if(game.playersData[nextExpectedBidderIndex].money == action.getMoney()) { 
+        return true; //all-in is also valid
+    } 
+    
+    if(!smallBlindPut) {
+        return action.getMoney() == game.smallBlind; //all-in already checked
+    }
+    
+    if(!bigBlindPut) {
+        return action.getMoney() == game.bigBlind; //all-in already checked
+    }
+    
+
     if(action.getMoney() == 0) {
         return true; //it is either check or fold, so valid
     }
@@ -116,10 +122,7 @@ bool Bank::isActionValid(Action action) {
             return false;
         }
     }
-    
-    if(game.playersData[nextExpectedBidderIndex].money == action.getMoney()) { 
-        return true; //all-in is also valid
-    } 
+
     return false;   
 }
 

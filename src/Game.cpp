@@ -3,8 +3,13 @@
 using namespace std;
 using namespace pkr;
 
-Game::Game(): bank(*this) {
+Game::Game() {
+   deck = std::make_shared<Deck>();
+   bank = new Bank(*this);
+}
 
+Game::Game(shared_ptr<Deck> deck): deck(deck) {
+   bank = new Bank(*this);
 }
 
 Street Game::getStreet() const {
@@ -15,7 +20,7 @@ const vector<PlayerData>& Game::getPlayersData() const {
 }
 
 Game::~Game() {
-    
+    delete bank;
 }
 
 int Game::countPlayersWithChips() {
@@ -57,7 +62,7 @@ void Game::prepareForRound() {
     prepareDeck();
     moveButton();
     cleanSharedCards();
-    bank.resetForNewRound();
+    bank->resetForNewRound();
     onStartRound();
 }
 
@@ -67,8 +72,7 @@ void Game::cleanSharedCards() {
 }
 
 void Game::prepareDeck() {
-    deck = Deck();
-    deck.shuffle();
+    deck->shuffle();
 }
 
 void Game::moveButton() {
@@ -85,12 +89,12 @@ void Game::playPreflop() {
 }
 
 void Game::placeBlinds() {
-    auto pd = playersData[bank.getNextExpectedBidderIndex()];
+    auto pd = playersData[bank->getNextExpectedBidderIndex()];
     Action smallBlindAction = Action::ActionBuilder()
             .setMoney(min(smallBlind, pd.money)).setPlayer(pd.player).setStreet(currentStreet).build();
     recievedNewAction(smallBlindAction);
     
-    pd = playersData[bank.getNextExpectedBidderIndex()];
+    pd = playersData[bank->getNextExpectedBidderIndex()];
     Action bigBlindAction = Action::ActionBuilder()
             .setMoney(min(bigBlind, pd.money)).setPlayer(pd.player).setStreet(currentStreet).build();
     recievedNewAction(bigBlindAction);
@@ -99,7 +103,7 @@ void Game::placeBlinds() {
 void Game::dealHoleCards() {
     for(auto& pd: playersData) {
         if(pd.active) {
-            Hand h(deck.popCard(), deck.popCard());
+            Hand h(deck->popCard(), deck->popCard());
             this->onCardsDealed(pd.player, h);
             pd.hand = h;
         }
@@ -113,9 +117,9 @@ void Game::playFlop() {
 }
 
 void Game::dealFlop(){
-    sharedCards.push_back(deck.popCard());
-    sharedCards.push_back(deck.popCard());
-    sharedCards.push_back(deck.popCard());
+    sharedCards.push_back(deck->popCard());
+    sharedCards.push_back(deck->popCard());
+    sharedCards.push_back(deck->popCard());
     this->onFlopDealed();
 }
 
@@ -126,7 +130,7 @@ void Game::playTurn() {
 }
 
 void Game::dealTurn(){
-    sharedCards.push_back(deck.popCard());
+    sharedCards.push_back(deck->popCard());
     this->onTurnDealed();
 }
 
@@ -137,15 +141,15 @@ void Game::playRiver() {
 }
 
 void Game::dealRiver(){
-    sharedCards.push_back(deck.popCard());
+    sharedCards.push_back(deck->popCard());
     this->onRiverDealed();
 }
 
 void Game::playStreet() {
     prepareForNextStreet();
 
-    while(bank.expectMoreBets()) {
-        Action newAction = playersData[bank.getNextExpectedBidderIndex()].player->preformAction(*this);
+    while(bank->expectMoreBets()) {
+        Action newAction = playersData[bank->getNextExpectedBidderIndex()].player->preformAction(*this);
         recievedNewAction(newAction);
     }
     
@@ -162,22 +166,18 @@ void Game::afterRoundPlayed() {
 }
 
 void Game::prepareForNextStreet() {
-    bank.resetForNewStreet();
+    bank->resetForNewStreet();
 }
 
 void Game::recievedNewAction(Action action) {
-    if(isActionValid(action)) {
-        bank.playAction(action);
-        onNewAction(action);
-    } else {
-        throw new runtime_error("invalid action");
-    }
+    bank->playAction(action);
+    onNewAction(action);
 }
 
 void Game::distributeBanks() {
-    bank.distributeChips();
+    bank->distributeChips();
 }
 
 bool Game::isActionValid(Action action) {
-    return bank.isActionValid(action);    
+    return bank->isActionValid(action);    
 }

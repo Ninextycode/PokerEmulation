@@ -5,9 +5,11 @@
 #include "player.h"
 #include "data_structs.h"
 #include "bank.h"
+#include "deck.h"
 
 namespace pkr {  
-   
+    class Bank;
+    
     class Game {
     friend class Bank;
     protected:
@@ -31,10 +33,9 @@ namespace pkr {
         
         std::vector<PlayerData> playersData;
     private:
-        Deck deck;
+        std::shared_ptr<Deck> deck;
 
         Street currentStreet = Street::preflop;
-
         
         void prepareForRound();
         void prepareDeck();
@@ -61,11 +62,12 @@ namespace pkr {
         void dealRiver();
         int indexOfPlayerInPlayerData(const std::shared_ptr<Player> player);
     
-        Bank bank;
+        Bank* bank;
     public:
         
         const std::vector<PlayerData>& getPlayersData() const;
                 
+        Game(std::shared_ptr<Deck> deck);
         Game();
         
         int countPlayersWithChips();
@@ -93,6 +95,8 @@ namespace pkr {
         void onGameEnd() override;
         void onNewAction(Action action) override;
     public:
+        using Game::Game;
+        
         void playGame() override;
     };
 }

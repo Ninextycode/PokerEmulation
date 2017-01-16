@@ -33,16 +33,6 @@ namespace pkr {
     friend std::ostream& operator<<(std::ostream& out, const Hand& hand);
     };
     
-    class Deck {
-    public:
-        Deck();
-        void shuffle();
-        Card popCard();
-        int size();
-    private:
-        std::vector<Card> cards;
-    };
-    
     enum class Street {
         preflop, flop, turn, river
     };

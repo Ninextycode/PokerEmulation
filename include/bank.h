@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   bank.h
- * Author: maxim
- *
- * Created on 23 December 2016, 16:44
- */
+#ifndef BANK_H
+#define BANK_H
 
 #include "headers.h"
 #include "data_structs.h"
+#include "evaluator.h"
+#include "errors.h"
+#include "game.h"
 
-#ifndef BANK_H
-#define BANK_H
 namespace pkr {
     class Game;
     
