@@ -24,7 +24,7 @@ namespace pkr {
         bool bigBlindPut = false;
         
         std::vector<int> bets;
-        std::vector<std::tuple<int, int>> getPowersOfPlayersCombinations();
+        std::vector<std::pair<int, int>> getPowersOfPlayersCombinations();
         bool isPlayerAllIn(PlayerData& data);
         bool didPlayerFold(PlayerData& data);
         bool isPlayerActiveNotAllIn(PlayerData& data);

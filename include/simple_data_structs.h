@@ -19,6 +19,7 @@ namespace pkr {
         Rank rank;
         Suit suit;
         Card(Rank rank, Suit suit);
+        Card(const char* s);
         Card();
         int toInt();
     friend std::ostream& operator<<(std::ostream& out, const Card& card);

@@ -4,7 +4,7 @@ using namespace pkr;
 using namespace std;
 
 int OneTwoGame::getInitialStack() {
-    return 10;
+    return 10 + int(10 * ((float)std::rand())/ RAND_MAX);
 }
 
 void OneTwoGame::playGame() {

@@ -178,6 +178,11 @@ void Game::recievedNewAction(Action action) {
 
 void Game::distributeBanks() {
     bank->distributeChips();
+    for(PlayerData& pd: playersData) {
+        if(pd.money == 0) {
+            pd.active = false;
+        }
+    }
 }
 
 bool Game::isActionValid(Action action) {

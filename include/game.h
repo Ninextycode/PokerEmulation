@@ -13,7 +13,7 @@ namespace pkr {
     class Game {
     friend class Bank;
     protected:
-        int button = 0;
+        int button = -1; //for the button to be 0 after the first move
         int bigBlind = 1;
         int smallBlind = 1;
         void playRound();

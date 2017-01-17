@@ -25,9 +25,11 @@ void Bank::resetForNewStreet() {
         this->nextExpectedBidderIndex = nextActiveNotAllInPlayerIndex(game.button);
     }
     this->bidderIndexToActLast = previousActiveNotAllInPlayerIndex(nextExpectedBidderIndex);
+    
     this->lastBidderIndex = -1; // noone actually acted on this street
     this->notAllInPlayersNumber = 0;
     this->activePlayersNumber = 0;
+    this->maxBet = 0;
     for(auto pd: game.playersData) {
         if(pd.active && !pd.isAllIn()) {
             this->notAllInPlayersNumber++;
@@ -55,12 +57,13 @@ void Bank::playAction(Action action) {
     if(bet > maxBet) { //raise
         //small blind is not counted as raise, so first raise is actually big blind
         lastRaisedBy = max(game.bigBlind, bet - maxBet);  
+        maxBet = bet;
+        
         if(notAllInPlayersNumber > 1) {
             bidderIndexToActLast = previousActiveNotAllInPlayerIndex(index);
         } else {
             bidderIndexToActLast = index; //someone raised, but everyone else are all-in
         }
-        maxBet = bet;
     }
     
     if(didPlayerFold(playerD)) {
@@ -110,7 +113,6 @@ bool Bank::isActionValid(Action action) {
     if(!bigBlindPut) {
         return action.getMoney() == game.bigBlind; //all-in already checked
     }
-    
 
     if(action.getMoney() == 0) {
         return true; //it is either check or fold, so valid
@@ -136,44 +138,44 @@ bool Bank::expectMoreBets() {
 }
 
 void Bank::distributeChips() {
-    vector<tuple<int, int>> positions_powers = getPowersOfPlayersCombinations();
+    vector<pair<int, int>> positions_powers = getPowersOfPlayersCombinations();
     
-    for(int i=0; i<positions_powers.size(); /*i incremented at the end of the loop body*/) {
+    for(int i=0; i<positions_powers.size(); i++) {
         auto pos_pow = positions_powers[i];
-        
+                        
         int playersToShare = 0;
-        //count how many players have the same combination
+        //count how many players have the same combination, including himself
         for(int j=i; j<positions_powers.size(); j++) {
-            if(get<1>(positions_powers[j]) == get<1>(pos_pow)) {
+            if(positions_powers[j].second == pos_pow.second) {
                 playersToShare++;
             }
         }
         
         //count how much money this players won in this round together
         int moneyToBeGiven = 0;
-        int betOfThisPlayer = bets[get<0>(pos_pow)];
-
+        int betOfThisPlayer = bets[pos_pow.first];
+        if(betOfThisPlayer == 0) 
+            continue;
+        
         for(int j = i; j < positions_powers.size(); j++) {
-            moneyToBeGiven += min(bets[j], betOfThisPlayer);
-            bets[j] -=  min(bets[j], betOfThisPlayer); //exclude money won by this players from common bank 
+            int& bet = bets[positions_powers[j].first];
+            moneyToBeGiven += min(bet, betOfThisPlayer);
+            bet -=  min(bet, betOfThisPlayer); //exclude money won by this players from common bank 
         }
         
+                
+        for(int k = i; k < i+playersToShare; k++) {
+            game.playersData[positions_powers[k].first].money += moneyToBeGiven / playersToShare;
+        }
         
         int remainings = moneyToBeGiven % playersToShare;
-        //distribute money which cannot be fairly distributed
-        while(remainings > 0) {            
-            for(int k = i; k < i+playersToShare; k++) {
-                game.playersData[k].money += 1;
-                remainings -= 1;
-                if(remainings == 0) break;
-            }
-        }
-        
+        //distribute money which cannot be fairly distributed        
         for(int k = i; k < i+playersToShare; k++) {
-            game.playersData[k].money += moneyToBeGiven / playersToShare;
+            if(remainings == 0) 
+                break;
+            game.playersData[positions_powers[k].first].money += 1;
+            remainings -= 1;
         }
-        
-        i += playersToShare;
     }
     
     int chips = 0;
@@ -181,31 +183,29 @@ void Bank::distributeChips() {
         chips += b;
     }
     if(chips != 0) {
-        throw runtime_error("not all chips distributed");
+        //throw runtime_error("not all chips distributed");
     }
 }
 
 
-vector<tuple<int, int>> Bank::getPowersOfPlayersCombinations() {
-    vector<tuple<int, int>> positions_powers;
-    positions_powers.reserve(game.playersData.size());
+vector<pair<int, int>> Bank::getPowersOfPlayersCombinations() {
+    vector<pair<int, int>> positions_powers;
+
     for(int i = 0; i < game.playersData.size(); i++) {
         auto& pd = game.playersData[i];
         if(pd.active) {
-            positions_powers.push_back(make_tuple(i, 
+            positions_powers.push_back(pair<int, int>(i, 
                     Evaluator::evaluate(game.sharedCards[0],
                     game.sharedCards[1],
                     game.sharedCards[2],
                     game.sharedCards[3],
                     game.sharedCards[4],
                     pd.hand.c1, pd.hand.c2)));
-        } else {
-            positions_powers.push_back({i, -1});
         }
     }
     sort(positions_powers.begin(), positions_powers.end(), 
-            [](const  tuple<int, int> & a, const  tuple<int, int> & b) -> bool {
-                return(get<1>(a) < get<1>(b));
+            [](const  pair<int, int> & a, const  pair<int, int> & b) -> bool {
+                return(a.second > b.second);
     });
     return positions_powers;
 }
