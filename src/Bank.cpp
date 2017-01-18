@@ -101,6 +101,9 @@ bool Bank::isActionValid(Action action) {
         return false; //wrong order of actions
     } 
     
+    if(action.getMoney() > game.playersData[nextExpectedBidderIndex].money) {
+        return false; //betting non-existing money
+    }
         
     if(game.playersData[nextExpectedBidderIndex].money == action.getMoney()) { 
         return true; //all-in is also valid
@@ -111,7 +114,7 @@ bool Bank::isActionValid(Action action) {
     }
     
     if(!bigBlindPut) {
-        return action.getMoney() == game.bigBlind; //all-in already checked
+        return action.getMoney() == game.bigBlind; //all-in and small blind already checked
     }
 
     if(action.getMoney() == 0) {

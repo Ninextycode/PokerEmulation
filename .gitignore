@@ -39,3 +39,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+#pycharm
+*/.idea/*
