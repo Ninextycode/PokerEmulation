@@ -10,6 +10,7 @@ namespace pkr {
         virtual void shuffle();
         Card popCard();
         int size();
+        ~Deck();
     protected:
         virtual void refill();
         std::vector<Card> cards;
@@ -24,6 +25,7 @@ namespace pkr {
         int state = 0;
     public: 
         CycleDeck(const std::vector<std::vector<Card>>& states);
+        CycleDeck(const std::vector<std::string>& states);
         void shuffle() override;
     };
 }

@@ -7,6 +7,9 @@ Deck::Deck() {
     refill();
 }
 
+Deck::~Deck() {
+}
+
 void Deck::refill() {
     this->cards.resize(52);
     for(int i = 0; i < 13; i++) {
@@ -36,13 +39,23 @@ void ConstantDeck::shuffle() {
     refill();
 }
 
-CycleDeck::CycleDeck(const vector<vector<Card> >& states) {
+CycleDeck::CycleDeck(const vector<vector<Card>>& states) {
     for(auto state: states) {
         this->states.push_back(state);
     }
-    this->cards = states[state];
+    this->cards = this->states[state];
 }
 
+CycleDeck::CycleDeck(const std::vector<std::string>& states) {
+    for(auto state: states) {
+        vector<Card> v;
+        for(int i = 1; i < state.length(); i+=2) {
+            v.push_back(Card(state.substr(i-1,2).data()));
+        }
+        this->states.push_back(v);
+    } 
+    this->cards = this->states[state];
+}
 void CycleDeck::shuffle() {
     this->cards = states[(++state) % states.size()];
 }
