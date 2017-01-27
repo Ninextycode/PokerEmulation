@@ -3,23 +3,23 @@
 using namespace pkr;
 using namespace std;
 
-bool PlayerData::isAllIn() {
+bool PlayerData::isAllIn() const {
     return this->active && this->money == 0;
 }
 
-int PlayerData::getMoney() {
+int PlayerData::getMoney() const {
     return money;
 }
 
-vector<Action> PlayerData::getActions() {
+vector<Action> PlayerData::getActions() const {
     return actions;
 }
 
-shared_ptr<Player> PlayerData::getPlayer() {
+const shared_ptr<Player> PlayerData::getPlayer() const {
     return this->player;
 }
 
-bool PlayerData::isActive() {
+bool PlayerData::isActive() const{
     return active;
 }
 

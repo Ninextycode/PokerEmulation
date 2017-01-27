@@ -11,7 +11,7 @@ HEADERSDIR = include
 SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJECTS = $(patsubst $(SRCDIR)/%, $(BUILDDIR)/% , $(SOURCES:.cpp=.o))
 HEADERS =  $(shell find $(HEADERSDIR) -type f -name *.h)
-CFLAGS = -std=c++14 -g -fpic 
+CFLAGS = -std=c++14 -g -fpic
 LIB_LINK_FLAGS = -shared -lboost_python3
 EXEC_LINK_FLAGS = 
 

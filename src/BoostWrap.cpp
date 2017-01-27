@@ -32,7 +32,15 @@ struct vector_from_seq_of {
 
 BOOST_PYTHON_MODULE(pokerlib) {
     vector_from_seq_of<string>();
+    vector_from_seq_of<shared_ptr<Player>>();
+    vector_from_seq_of<shared_ptr<Deck>>();   
     
+    enum_<Street>("Street")
+        .value("preflop", Street::preflop)
+        .value("flop",  Street::flop)
+        .value("turn",  Street::turn)
+        .value("river", Street::river);
+
     enum_<Rank>("Rank")
         .value("A", A)
         .value("K", K)
@@ -54,7 +62,7 @@ BOOST_PYTHON_MODULE(pokerlib) {
         .value("d", d)
         .value("c", c);
     
-    class_<Deck>("Deck")
+    class_<Deck, shared_ptr<Deck>>("Deck")
         .def("shuffle", &Deck::shuffle)
         .def("pop_card", &Deck::popCard)
         .def("size", &Deck::size)
@@ -71,4 +79,84 @@ BOOST_PYTHON_MODULE(pokerlib) {
         .def(init<vector<string>>());
     
     class_<ConstantDeck,  bases<Deck>>("ConstantDeck");   
+    
+    
+    struct GameWrap: Game, wrapper<Game>{
+        using Game::Game;
+        void playGame() override {
+            this->get_override("play_game")();
+            return; 
+        }
+        void onStartRound() const override {
+            this->get_override("on_start_round")();
+            return; 
+        }
+        void onCardsDealt(std::shared_ptr<Player> const player, Hand hand) const override {
+            this->get_override("on_cards_dealt")(player, hand);
+            return; 
+        }
+        void onFlopDealt(vector<Card> flop) const override {
+            this->get_override("on_flop_dealt")(flop);
+            return; 
+        }
+        void onTurnDealt(Card turn) const override {
+            this->get_override("on_turn_dealt")(turn);
+            return; 
+        }
+        void onRiverDealt(Card river) const override {
+            this->get_override("on_river_dealt")(river);
+            return; 
+        }
+        void onFinalCombinations(std::vector<Hand> hands, const std::vector<Card>& sharedCards) const override {
+            this->get_override("on_final_combinations")(hands, sharedCards);
+            return; 
+        }
+        void onGameEnd() const override {
+            this->get_override("on_game_end")();
+            return; 
+        }
+        void onNewAction(Action action) const override {
+            this->get_override("on_new_action")(action);
+            return; 
+        }    
+        int getInitialStack() const override {            
+            return this->get_override("get_initial_stack")();
+        }  
+    };
+    
+    class_<GameWrap, boost::noncopyable>("Game")
+        .def(init<shared_ptr<Deck>>())
+        .def("get_players_data", &Game::getPlayersData, return_value_policy<copy_const_reference>())
+        .def("get_street", &Game::getStreet)
+        .def("set_players", &Game::setPlayers)
+        .def("is_action_valid", &Game::isActionValid)
+        .def("play_game", pure_virtual(&Game::playGame))
+        
+        .def("on_cards_dealt", pure_virtual(&GameWrap::onCardsDealt))
+        .def("on_flop_dealt", pure_virtual(&GameWrap::onFlopDealt))
+        .def("on_turn_dealt", pure_virtual(&GameWrap::onTurnDealt))
+        .def("on_river_dealt", pure_virtual(&GameWrap::onRiverDealt))
+        .def("on_final_combinations", pure_virtual(&GameWrap::onFinalCombinations))
+        .def("on_game_end", pure_virtual(&GameWrap::onGameEnd))
+        .def("on_new_action", pure_virtual(&GameWrap::onNewAction))
+        .def("get_initial_stack", pure_virtual(&GameWrap::getInitialStack));
+    
+    struct PlayerWrap : Player, wrapper<Player> {
+        void markAsWinner() override {
+            this->get_override("mark_as_winner")();
+            return;
+        }
+        Action preformAction(const Game& currentGame, Hand hand) override {
+            return this->get_override("preform_action")(currentGame, hand);
+        }
+        std::string getName() const override {
+            return this->get_override("get_name")();
+        }
+    };
+    
+    class_<PlayerWrap, boost::noncopyable>("Player") 
+        .def("mark_as_winner", pure_virtual(&Player::markAsWinner))
+        .def("preform_action", pure_virtual(&Player::preformAction))
+        .def("get_name", pure_virtual(&Player::getName));
+    
 }

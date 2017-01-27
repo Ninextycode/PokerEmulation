@@ -15,13 +15,11 @@ namespace pkr{
      */
 
     class Player : public std::enable_shared_from_this<Player> {
-    private:
-        Card card1, card2;
     public:
         virtual void markAsWinner() = 0;
-        virtual Action preformAction(const Game& currentGame) = 0;  
+        virtual Action preformAction(const Game& currentGame, Hand hand)  = 0;  
         
-        virtual std::string getName() = 0;
+        virtual std::string getName() const = 0;
         virtual ~Player();
     };
     
@@ -31,9 +29,9 @@ namespace pkr{
     public:
         AllInPlayer(std::string name);
         void markAsWinner() override;
-        std::string getName() override;
-        Action preformAction(const Game& currentGame) override;
-        int myMoney(const Game& currentGame);
+        std::string getName() const override;
+        Action preformAction(const Game& currentGame, Hand hand) override;
+        int myMoney(const Game& currentGame) const;
     };
 }
 

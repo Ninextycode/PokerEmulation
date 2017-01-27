@@ -12,12 +12,12 @@ void AllInPlayer::markAsWinner() {
     cout << name << " won" << endl;
 }
 
-Action AllInPlayer::preformAction(const Game& game) {
+Action AllInPlayer::preformAction(const Game& game, Hand hand) {
     return Action::ActionBuilder().setMoney(myMoney(game))
             .setPlayer(shared_from_this()).setStreet(game.getStreet()).build();
 }
 
-int AllInPlayer::myMoney(const Game& currentGame) {
+int AllInPlayer::myMoney(const Game& currentGame) const {
     auto data = currentGame.getPlayersData();
     for(auto pd: data) {
         if(pd.getPlayer() == shared_from_this()) {
@@ -25,6 +25,6 @@ int AllInPlayer::myMoney(const Game& currentGame) {
         }
     }
 }
-string AllInPlayer::getName() {
+string AllInPlayer::getName() const {
     return this->name;
 }

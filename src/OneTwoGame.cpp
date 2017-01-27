@@ -3,7 +3,7 @@
 using namespace pkr;
 using namespace std;
 
-int OneTwoGame::getInitialStack() {
+int OneTwoGame::getInitialStack() const {
     return 10;
 }
 
@@ -15,7 +15,7 @@ void OneTwoGame::playGame() {
     }
 }
 
-void OneTwoGame::onStartRound() {
+void OneTwoGame::onStartRound() const{
     cout << "=== NEW ROUND ===" << endl;
     cout << "Button is " << playersData[button].getPlayer()->getName() << endl;
     for(auto pd: playersData) {
@@ -23,29 +23,29 @@ void OneTwoGame::onStartRound() {
     }
 }
 
-void OneTwoGame::onCardsDealed(std::shared_ptr<Player> player, Hand hand) {
+void OneTwoGame::onCardsDealt(std::shared_ptr<Player> player, Hand hand) const {
     cout << player->getName() << " gets " << hand << endl;
 }
 
-void OneTwoGame::onFlopDealed() {
+void OneTwoGame::onFlopDealt(vector<Card> flop) const {
     cout << "Flop is " 
-            << sharedCards[sharedCards.size() - 1] 
-            << sharedCards[sharedCards.size() - 2]
-            << sharedCards[sharedCards.size() - 3] << endl;
+            << flop[0] 
+            << flop[1]
+            << flop[2] << endl;
 }
 
-void OneTwoGame::onTurnDealed() {
+void OneTwoGame::onTurnDealt(Card turn) const {
     cout << "Turn is " 
-            << sharedCards[sharedCards.size() - 1] << endl;
+            << turn << endl;
 }
 
 
-void OneTwoGame::onRiverDealed() {
+void OneTwoGame::onRiverDealt(Card river) const {
     cout << "River is " 
-            << sharedCards[sharedCards.size() - 1] << endl;
+            << river << endl;
 }
 
-void OneTwoGame::onFinalCombinations(std::vector<Hand> hands, const std::vector<Card>& sharedCards) {
+void OneTwoGame::onFinalCombinations(std::vector<Hand> hands, const std::vector<Card>& sharedCards) const {
     for(int i = 0; i < playersData.size(); i++) {
         if(playersData[i].isActive()) {
             cout << playersData[i].getPlayer()->getName() << " has " <<  hands[i] << "|" 
@@ -54,13 +54,13 @@ void OneTwoGame::onFinalCombinations(std::vector<Hand> hands, const std::vector<
     }
 }
 
-void OneTwoGame::onGameEnd() {
+void OneTwoGame::onGameEnd() const {
     for(int i = 0; i < playersData.size(); i++) {
         cout << playersData[i].getPlayer()->getName()
                 << " has " << playersData[i].getMoney() << " chips " << endl;
     }
 }
 
-void OneTwoGame::onNewAction(Action action) {
+void OneTwoGame::onNewAction(Action action) const {
     cout << action << endl;
 }

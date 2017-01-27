@@ -105,7 +105,7 @@ void Game::dealHoleCards() {
     for(auto& pd: playersData) {
         if(pd.active) {
             Hand h(deck->popCard(), deck->popCard());
-            this->onCardsDealed(pd.player, h);
+            this->onCardsDealt(pd.player, h);
             pd.hand = h;
         }
     }
@@ -122,7 +122,7 @@ void Game::dealFlop(){
     sharedCards.push_back(deck->popCard());
     sharedCards.push_back(deck->popCard());
     sharedCards.push_back(deck->popCard());
-    this->onFlopDealed();
+    this->onFlopDealt(vector<Card>(sharedCards.end()-3, sharedCards.end()));
 }
 
 void Game::playTurn() {
@@ -134,7 +134,7 @@ void Game::playTurn() {
 
 void Game::dealTurn(){
     sharedCards.push_back(deck->popCard());
-    this->onTurnDealed();
+    this->onTurnDealt(sharedCards.back());
 }
 
 void Game::playRiver() {
@@ -146,12 +146,13 @@ void Game::playRiver() {
 
 void Game::dealRiver(){
     sharedCards.push_back(deck->popCard());
-    this->onRiverDealed();
+    this->onRiverDealt(sharedCards.back());
 }
 
 void Game::playStreet() {
     while(bank->expectMoreBets()) {
-        Action newAction = playersData[bank->getNextExpectedBidderIndex()].player->preformAction(*this);
+        Action newAction = playersData[bank->getNextExpectedBidderIndex()]
+                .player->preformAction(*this, playersData[bank->getNextExpectedBidderIndex()].hand);
         recievedNewAction(newAction);
     }
     

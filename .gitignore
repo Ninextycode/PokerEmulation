@@ -42,3 +42,6 @@ nbdist/
 
 #pycharm
 */.idea/*
+
+# Eclipse Core
+.project
